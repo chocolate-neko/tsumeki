@@ -1,0 +1,41 @@
+Tsumeki:
+    Base Functions:
+        ✔ Extended Eris client (Tsumeki client) @high @done(21-01-25 23:10)
+        ✔ Command file loader @done(21-01-24 23:11)
+            ✔ Command structure @done(21-01-24 23:11)
+            ✔ Sub-commands @done(21-01-28 18:13)
+        ✔ Command reloading @done(21-01-28 17:20)
+        ☐ Custom help command @very-premitive @improve
+        ☐ Currency system @low
+    Information Commands:
+        ✔ User info @done(21-02-03 20:45)
+        ✔ Server info @done(21-02-03 20:45)
+        ✔ Avatar @done(21-01-29 18:28)
+        ✔ About @done(21-02-03 20:45)
+        ☐ User profile
+            ☐ Stat tracker
+    Moderation Commands:
+        ☐ Ban
+        ☐ Kick
+        ☐ Purge
+            ☐ Message link
+            ☐ Message ID
+            ☐ Bulk
+    Fun Commands:
+        ✔ Neko @done(21-02-12 14:16) @improve 
+            ✔ Sfw @done(21-02-12 14:16)
+            ✔ Lewd @done(21-02-12 14:16)
+        ☐ Actions
+            ☐ Sfw
+            ☐ Lewd
+        ☐ Music
+            ☐ Play
+            ☐ Pause
+            ☐ Playlist
+        ☐ Love calculator @wtf
+    Games:
+        ☐ Text based adventure
+        ☐ Dice rolling
+        ☐ Gatcha sim
+
+    

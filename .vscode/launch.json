@@ -1,0 +1,13 @@
+{
+    "configurations": [
+        {
+            "name": "Launch!",
+            "program": "${workspaceFolder}/build/index.js",
+            "request": "launch",
+            "skipFiles": [
+                "<node_internals>/**"
+            ],
+            "type": "pwa-node"
+        }
+    ]
+}
