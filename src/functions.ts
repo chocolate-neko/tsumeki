@@ -1,9 +1,14 @@
 import { readdir, stat } from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import { Collection, CommandClient, Role } from 'eris';
+import { Collection, CommandClient, Embed, Role } from 'eris';
 import { TCommand } from './command';
 type LogType = 'LOG' | 'WARN' | 'ERROR' | 'SUCCESS' | 'DEBUG';
+type EmbedType = 'WARNING' | 'ERROR' | 'INVALID' | 'SUCCESS' | 'DEFAULT';
+
+interface EmbedGeneratorOptions {
+    embedType?: EmbedType;
+}
 
 export function logger(
     msg: any,
@@ -132,6 +137,13 @@ export function getMemberRoleMentions(memberRoles: string[]) {
         mentionsArr.push(`<@&${id}>`);
     });
     return mentionsArr;
+}
+
+export function embedGenerator(options?: EmbedGeneratorOptions): Embed {
+    return {
+        type: 'rich',
+        description: 'This function has not been implemented properly **yet**',
+    };
 }
 
 function walk(
