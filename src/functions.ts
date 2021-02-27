@@ -1,13 +1,25 @@
 import { readdir, stat } from 'fs';
 import path from 'path';
 import chalk from 'chalk';
-import { Collection, CommandClient, Embed, Role } from 'eris';
+import {
+    Collection,
+    CommandClient,
+    EmbedField,
+    EmbedOptions,
+    Role,
+} from 'eris';
 import { TCommand } from './command';
 type LogType = 'LOG' | 'WARN' | 'ERROR' | 'SUCCESS' | 'DEBUG';
 type EmbedType = 'WARNING' | 'ERROR' | 'INVALID' | 'SUCCESS' | 'DEFAULT';
 
 interface EmbedGeneratorOptions {
-    embedType?: EmbedType;
+    client: CommandClient;
+    displayAuthor?: boolean;
+    title?: string;
+    description: string;
+    fields?: EmbedField[];
+    footer?: string;
+    timestamp?: boolean;
 }
 
 export function logger(
@@ -139,11 +151,49 @@ export function getMemberRoleMentions(memberRoles: string[]) {
     return mentionsArr;
 }
 
-export function embedGenerator(options?: EmbedGeneratorOptions): Embed {
-    return {
-        type: 'rich',
-        description: 'This function has not been implemented properly **yet**',
+export function logEmbedGenerator(
+    options: EmbedGeneratorOptions,
+    embedType: EmbedType = 'DEFAULT',
+): EmbedOptions {
+    const embedOptions: EmbedOptions = {
+        author: options.displayAuthor
+            ? {
+                  name: options.client.user.username,
+                  icon_url: options.client.user.avatarURL,
+              }
+            : null,
+        title: options.title,
+        description: options.description,
+        fields: options.fields ? options.fields : [],
+        footer: options.footer ? { text: options.footer } : null,
+        timestamp: options.timestamp ? new Date() : null,
     };
+
+    let embed: EmbedOptions = embedOptions;
+
+    switch (embedType) {
+        case 'WARNING':
+            embed.color = parseColor('#f0c46a');
+            break;
+        case 'SUCCESS':
+            embed.color = parseColor('#67e972');
+            break;
+        case 'ERROR':
+            embed.color = parseColor('#f15b5b');
+            break;
+        case 'DEFAULT':
+            embed.color = parseColor('#fba7d7');
+            break;
+    }
+    return embed;
+
+    // return {
+    //     description: 'This function has not been implemented properly **yet**',
+    // };
+}
+
+export function parseColor(colorHex: string): number {
+    return parseInt(colorHex.replace('#', ''), 16);
 }
 
 function walk(
