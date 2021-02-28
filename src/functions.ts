@@ -13,7 +13,7 @@ type LogType = 'LOG' | 'WARN' | 'ERROR' | 'SUCCESS' | 'DEBUG';
 type EmbedType = 'WARNING' | 'ERROR' | 'INVALID' | 'SUCCESS' | 'DEFAULT';
 
 interface EmbedGeneratorOptions {
-    client: CommandClient;
+    client?: CommandClient;
     displayAuthor?: boolean;
     title?: string;
     description: string;
@@ -158,8 +158,9 @@ export function logEmbedGenerator(
     const embedOptions: EmbedOptions = {
         author: options.displayAuthor
             ? {
-                  name: options.client.user.username,
-                  icon_url: options.client.user.avatarURL,
+                  name:
+                      options.client?.user.username ?? `client is not defined`,
+                  icon_url: options.client?.user.avatarURL,
               }
             : null,
         title: options.title,
