@@ -32,6 +32,16 @@ export class TsumekiClient {
             });
         });
 
+        // Little easter-egg for fun 😋
+        this.client.on('messageCreate', (message) => {
+            if (
+                message.content === `<@${this.client.user.id}>` ||
+                message.content === `<@!${this.client.user.id}>`
+            ) {
+                message.channel.createMessage(`yes? ${message.author.mention}`);
+            }
+        });
+
         // this.client.on("messageCreate", (message: Message) => {
         //     if (message.author.bot) return;
         //     if (!message.command) return;
