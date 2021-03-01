@@ -1,31 +1,38 @@
 import { CommandClient } from 'eris';
 import { TCommand } from '../../command';
-import { embedGenerator } from '../../functions';
+import { logEmbedGenerator } from '../../functions';
 
 export default class Kick extends TCommand {
     constructor(client: CommandClient) {
         super(
             'kick',
-            (msg, args) => {
+            (msg, [id, ...reason]) => {
                 if (msg.channel.type == 0) {
-                    let testString = '';
                     msg.channel.guild
-                        .fetchMembers({ userIDs: args })
-                        .then((members) => {
-                            members.forEach((member) => {
-                                testString += `${member.username} \`[${member.id}]\`\n`;
+                        .fetchMembers({
+                            userIDs: [id.replace(/(<@!|>)|(<@|>)/g, '')],
+                        })
+                        .then(([member]) => {
+                            if (!member) return;
+                            msg.channel.createMessage({
+                                embed: logEmbedGenerator(
+                                    {
+                                        description: `${member.username}#${
+                                            member.discriminator
+                                        } was kicked\nReason: ${reason.join(
+                                            ' ',
+                                        )}`,
+                                        title: 'Fake kick',
+                                        footer: `ID: ${member.id}`,
+                                    },
+                                    'SUCCESS',
+                                ),
                             });
                         })
-                        .then(() =>
-                            msg.channel.createMessage({
-                                content: testString ? testString : 'Nothing',
-                                embed: embedGenerator(),
-                            }),
-                        )
                         .catch();
                 }
             },
-            {},
+            { argsRequired: true, invalidUsageMessage: false },
         );
     }
 }
