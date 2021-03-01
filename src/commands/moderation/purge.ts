@@ -1,5 +1,6 @@
 import { CommandClient, GuildTextableChannel } from 'eris';
 import { TCommand } from '../../command';
+import { logEmbedGenerator } from '../../functions';
 
 export default class Purge extends TCommand {
     // TODO Work on purge @high
@@ -7,28 +8,51 @@ export default class Purge extends TCommand {
     constructor(client: CommandClient) {
         super(
             'purge',
-            (msg, args) => {
-                if (!args[0]) return;
-                if (parseInt(args[0]) === NaN) return;
+            (msg, [amount]) => {
+                if (isNaN(parseInt(amount))) return;
                 if (msg.channel.type == 0) {
                     let ids: string[] = [];
 
                     msg.channel
-                        .getMessages(parseInt(args[0]))
+                        .getMessages(parseInt(amount))
                         .then((msgs) => {
                             msgs.forEach((msg) => {
                                 ids.push(msg.id);
                             });
                         })
-                        .then(() => {
+                        .then(async () => {
+                            const deleteMsg = await msg.channel.createMessage({
+                                embed: logEmbedGenerator(
+                                    {
+                                        description: `Deleting ${ids.length} message(s)...`,
+                                    },
+                                    'WARNING',
+                                ),
+                            });
                             (<GuildTextableChannel>msg.channel).deleteMessages(
                                 ids,
                             );
+                            deleteMsg.edit({
+                                embed: logEmbedGenerator(
+                                    {
+                                        description: `${ids.length} message(s) were deleted!`,
+                                    },
+                                    'SUCCESS',
+                                ),
+                            });
                         })
                         .catch();
                 }
             },
-            {},
+            {
+                argsRequired: true,
+                invalidUsageMessage: false,
+                deleteCommand: true,
+                defaultSubcommandOptions: {
+                    argsRequired: true,
+                    invalidUsageMessage: false,
+                },
+            },
         );
     }
 
@@ -36,12 +60,11 @@ export default class Purge extends TCommand {
     public registerSubcommands(client: CommandClient) {
         client.commands[this.label].registerSubcommand(
             'from',
-            (msg, args) => {
+            (msg, [userId, amount]) => {
                 const msgDeleteAmt =
-                    parseInt(args[1]) === NaN || args[1] === undefined
+                    isNaN(parseInt(amount)) || amount === undefined
                         ? 50
-                        : parseInt(args[1]);
-                if (!args[0]) return;
+                        : parseInt(amount);
 
                 if (msg.channel.type == 0) {
                     let ids: string[] = [];
@@ -50,17 +73,36 @@ export default class Purge extends TCommand {
                         .getMessages(msgDeleteAmt)
                         .then((msgs) => {
                             msgs.forEach((msg) => {
-                                if (msg.author.id === args[0]) {
+                                if (
+                                    msg.author.id ===
+                                    userId.replace(/(<@!|>)|(<@|>)/g, '')
+                                ) {
                                     ids.push(msg.id);
                                 }
                             });
                         })
-                        .then(() => {
+                        .then(async () => {
+                            const deleteMsg = await msg.channel.createMessage({
+                                embed: logEmbedGenerator(
+                                    {
+                                        description: `Deleting ${ids.length} message(s)...`,
+                                    },
+                                    'WARNING',
+                                ),
+                            });
                             (<GuildTextableChannel>msg.channel).deleteMessages(
                                 ids,
                             );
+                            deleteMsg.edit({
+                                embed: logEmbedGenerator(
+                                    {
+                                        description: `${ids.length} message(s) were deleted!`,
+                                    },
+                                    'SUCCESS',
+                                ),
+                            });
                         })
-                        .catch((err) => console.log(err));
+                        .catch();
                 }
             },
             {},
