@@ -1,3 +1,4 @@
+import { stripIndents } from 'common-tags';
 import { CommandClient, GuildTextableChannel } from 'eris';
 import { TCommand } from '../../command';
 import { logEmbedGenerator } from '../../functions';
@@ -45,9 +46,19 @@ export default class Purge extends TCommand {
                 }
             },
             {
+                description: 'Deletes the specified amount of messages',
+                fullDescription: stripIndents`
+                    <amount> field is required.
+                `,
                 argsRequired: true,
+                usage: '<amount>',
                 invalidUsageMessage: false,
                 deleteCommand: true,
+                requirements: {
+                    permissions: {
+                        manageMessages: true,
+                    },
+                },
                 defaultSubcommandOptions: {
                     argsRequired: true,
                     invalidUsageMessage: false,

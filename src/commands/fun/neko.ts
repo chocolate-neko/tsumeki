@@ -21,7 +21,14 @@ export default class Neko extends TCommand {
                     },
                 });
             },
-            {},
+            {
+                aliases: ['catgirl'],
+                description: 'Sends a neko in chat',
+                defaultSubcommandOptions: {
+                    aliases: ['catgirl'],
+                    description: 'Sends a neko in chat',
+                },
+            },
         );
     }
 
@@ -62,7 +69,7 @@ export default class Neko extends TCommand {
                     },
                 });
             },
-            {},
+            { fullDescription: 'NSFW' },
         );
     }
 }

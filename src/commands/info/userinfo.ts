@@ -119,7 +119,7 @@ export default class UserInfo extends TCommand {
                 aliases: ['whois', 'uinfo', 'memberinfo', 'minfo'],
                 guildOnly: true,
                 description: 'Displays information about a mentioned user',
-                usage: '<mention>',
+                usage: '<user>',
             },
         );
     }

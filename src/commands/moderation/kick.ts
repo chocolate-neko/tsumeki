@@ -1,6 +1,7 @@
 import { CommandClient } from 'eris';
 import { TCommand } from '../../command';
 import { logEmbedGenerator } from '../../functions';
+import { stripIndents } from 'common-tags';
 
 export default class Kick extends TCommand {
     constructor(client: CommandClient) {
@@ -19,7 +20,7 @@ export default class Kick extends TCommand {
                                     {
                                         description: `${member.username}#${
                                             member.discriminator
-                                        } was kicked\nReason: ${reason.join(
+                                        } was kicked\nReason:${reason.join(
                                             ' ',
                                         )}`,
                                         title: 'Fake kick',
@@ -32,7 +33,33 @@ export default class Kick extends TCommand {
                         .catch();
                 }
             },
-            { argsRequired: true, invalidUsageMessage: false },
+            {
+                aliases: ['k'],
+                argsRequired: true,
+                invalidUsageMessage: false,
+                description: 'Kicks a specified user from the guild.',
+                fullDescription: stripIndents`
+                    <user> field is required.
+                    [reason] field is optional.
+
+                    * Note: Should \`reason\` field be left empty, it would be prefilled with \`No reason provided\` by default.
+                `,
+                usage: '<user> [reason]',
+                permissionMessage: (msg) => {
+                    msg.channel.createMessage({
+                        embed: logEmbedGenerator({
+                            description:
+                                'you lack the permissions to use this command!',
+                        }),
+                    });
+                    return '';
+                },
+                requirements: {
+                    permissions: {
+                        kickMembers: true,
+                    },
+                },
+            },
         );
     }
 }

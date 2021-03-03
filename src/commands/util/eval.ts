@@ -1,5 +1,7 @@
+import { stripIndents } from 'common-tags';
 import { CommandClient } from 'eris';
 import { TCommand } from '../../command';
+import { logEmbedGenerator } from '../../functions';
 
 export default class Eval extends TCommand {
     constructor(client: CommandClient) {
@@ -42,9 +44,21 @@ export default class Eval extends TCommand {
                 argsRequired: true,
                 description:
                     "Evaluates an expression that's passed in as an argument",
+                fullDescription: stripIndents`
+                    <expression> field is required.
+
+                    Code blocks are allowed but only in javascript format ie.
+                `,
                 usage: '<expression>',
-                invalidUsageMessage:
-                    'Please provide an expression to evaluate!',
+                invalidUsageMessage: (msg) => {
+                    msg.channel.createMessage({
+                        embed: logEmbedGenerator({
+                            description:
+                                'Please provide an expression to evaluate!',
+                        }),
+                    });
+                    return '';
+                },
             },
         );
     }
@@ -94,10 +108,22 @@ export default class Eval extends TCommand {
                 argsRequired: true,
                 description:
                     "Evaluates an expression that's passed in as an argument (Returns an output)",
+                fullDescription: stripIndents`
+                    <expression> field is required.
+
+                    Code blocks are allowed but only in javascript format ie.
+                `,
                 aliases: ['o', 'output'],
                 usage: '<expression>',
-                invalidUsageMessage:
-                    'Please provide an expression to evaluate!',
+                invalidUsageMessage: (msg) => {
+                    msg.channel.createMessage({
+                        embed: logEmbedGenerator({
+                            description:
+                                'Please provide an expression to evaluate!',
+                        }),
+                    });
+                    return '';
+                },
             },
         );
     }

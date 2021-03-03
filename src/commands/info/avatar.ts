@@ -1,3 +1,4 @@
+import { stripIndents } from 'common-tags';
 import { CommandClient, Member, User } from 'eris';
 import { TCommand } from '../../command';
 import { getMemberDisplayColour } from '../../functions';
@@ -63,7 +64,10 @@ export default class Avatar extends TCommand {
                 aliases: ['av', 'pfp'],
                 guildOnly: true,
                 description: 'Displays the profile image of the mentioned user',
-                usage: '<mention>',
+                fullDescription: stripIndents`
+                    [user] field is optional.
+                `,
+                usage: '[user]',
             },
         );
     }

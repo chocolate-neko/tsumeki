@@ -59,7 +59,7 @@ export default class About extends TCommand {
                     },
                 });
             },
-            {},
+            { description: 'Information about the bot', cooldown: 5000 },
         );
     }
 }
