@@ -1,5 +1,11 @@
 import { Client, CommandClient } from 'eris';
 import { TCommand } from '../../command';
+import { parseColor } from '../../functions';
+const info: {
+    version: string;
+    description: string;
+    dependencies: { [s: string]: string };
+} = require('../../../package.json');
 
 export default class About extends TCommand {
     constructor(client: CommandClient) {
@@ -13,7 +19,8 @@ export default class About extends TCommand {
                             icon_url: client.user.avatarURL,
                         },
                         title: 'About me',
-                        description: 'Hi <:LoliSip:644152771410526219>',
+                        description: `My version number: \`v${info.version}\`\n${info.description}`,
+                        color: parseColor('#fba7d7'),
                         fields: [
                             {
                                 name: 'My prefixes',
@@ -51,6 +58,12 @@ export default class About extends TCommand {
                                 name: 'User agent',
                                 value: client.requestHandler.userAgent,
                                 inline: false,
+                            },
+                            {
+                                name: 'Node packages',
+                                value: Object.keys(info.dependencies).join(
+                                    '\n',
+                                ),
                             },
                         ],
                         footer: {
