@@ -1,6 +1,7 @@
 Tsumeki:
     The Ever Evolving Todo List™:
-        ☐ Embed generator (Uniform looking embeds)
+        ☐ Command Categories
+        ✔ Embed generator (Uniform looking embeds) @done(21-03-05 17:51)
     Base Functions:
         ✔ Extended Eris client (Tsumeki client) @high @done(21-01-25 23:10)
         ✔ Command file loader @done(21-01-24 23:11)

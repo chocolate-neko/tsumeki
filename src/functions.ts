@@ -110,14 +110,18 @@ export function loadCommands(
 
             if (reload) {
                 results.forEach((file) => {
-                    delete require.cache[file];
+                    delete require.cache[file[0]];
                 });
             }
 
-            results.forEach((file) => {
-                logger(file, 'DEBUG', 'file load');
+            results.forEach(([path, category]) => {
+                logger(
+                    `${path} ${chalk`{gray [${category}]}`}`,
+                    'DEBUG',
+                    'file load',
+                );
 
-                const command: TCommand = new (require(file).default)(client);
+                const command: TCommand = new (require(path).default)(client);
                 client.registerCommand(
                     command.label,
                     command.generator,
@@ -199,10 +203,13 @@ export function parseColor(colorHex: string): number {
 
 function walk(
     dir: string,
-    done: (err: NodeJS.ErrnoException | null, results?: string[]) => void,
+    done: (
+        err: NodeJS.ErrnoException | null,
+        results?: [string, string][],
+    ) => void,
     filter?: (f: string) => boolean,
 ) {
-    let results: string[] = [];
+    let results: [string, string][] = [];
     readdir(dir, (err, list) => {
         if (err) {
             return done(err);
@@ -238,7 +245,8 @@ function walk(
                         typeof filter === 'undefined' ||
                         (filter && filter(file))
                     ) {
-                        results.push(file);
+                        const dirname = path.basename(path.dirname(file));
+                        results.push([file, dirname]);
                     }
                     if (!--pending) {
                         done(null, results);
