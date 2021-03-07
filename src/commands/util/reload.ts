@@ -1,9 +1,10 @@
 import { CommandClient } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 import { loadCommands, logger } from '../../functions';
 
 export default class Reload extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'reload',
             async (msg, args) => {

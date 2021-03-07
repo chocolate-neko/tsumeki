@@ -9,6 +9,7 @@ import {
     Role,
 } from 'eris';
 import { TCommand } from './command';
+import { TsumekiClient } from './client';
 type LogType = 'LOG' | 'WARN' | 'ERROR' | 'SUCCESS' | 'DEBUG';
 type EmbedType = 'WARNING' | 'ERROR' | 'INVALID' | 'SUCCESS' | 'DEFAULT';
 
@@ -92,7 +93,7 @@ export function timeTranslate(timestamp: number): string {
 
 export function loadCommands(
     dirPath: string,
-    client: CommandClient,
+    client: TsumekiClient,
     reload: boolean = false,
 ) {
     const resolvedPath = path.join(__dirname, dirPath);
@@ -128,6 +129,8 @@ export function loadCommands(
                     command.options,
                 );
                 command.registerSubcommands(client);
+
+                client.commandCategories.set(command.label, category);
             });
         },
         (f: string) => /.js$/.test(f),

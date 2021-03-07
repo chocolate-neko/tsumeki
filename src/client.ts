@@ -7,36 +7,39 @@ import {
 } from 'eris';
 import { logger, loadCommands } from './functions';
 
-export class TsumekiClient {
-    private client: CommandClient;
+export class TsumekiClient extends CommandClient {
+    // private client: CommandClient;
+    public commandCategories: Map<string, string>;
 
     constructor(
         token: string,
         options?: ClientOptions,
         commandOptions?: CommandClientOptions,
     ) {
-        this.client = new CommandClient(token, options, commandOptions);
+        super(token, options, commandOptions);
+        this.commandCategories = new Map<string, string>();
 
-        loadCommands('./commands', this.client);
+        loadCommands('./commands', this);
 
-        this.client.on('ready', () => {
+        this.on('ready', () => {
             logger(
-                `Logged in as ${this.client.user.username}#${this.client.user.discriminator}`,
+                `Logged in as ${this.user.username}#${this.user.discriminator}`,
                 'LOG',
                 'login',
-                this.client.user.id,
+                this.user.id,
             );
-            this.client.editStatus('online', {
+            console.log(this.commandCategories);
+            this.editStatus('online', {
                 name: `${commandOptions.prefix[0]}help for help ❤`,
                 type: 0,
             });
         });
 
         // Little easter-egg for fun 😋
-        this.client.on('messageCreate', (message) => {
+        this.on('messageCreate', (message) => {
             if (
-                message.content === `<@${this.client.user.id}>` ||
-                message.content === `<@!${this.client.user.id}>`
+                message.content === `<@${this.user.id}>` ||
+                message.content === `<@!${this.user.id}>`
             ) {
                 message.channel.createMessage(`yes? ${message.author.mention}`);
             }
@@ -49,6 +52,6 @@ export class TsumekiClient {
     }
 
     public run() {
-        this.client.connect();
+        this.connect();
     }
 }
