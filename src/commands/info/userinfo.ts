@@ -1,9 +1,10 @@
 import { CommandClient, ExtendedUser, Member } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 import { getMemberDisplayColour, getMemberRoleMentions } from '../../functions';
 
 export default class UserInfo extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'userinfo',
             (msg, args) => {

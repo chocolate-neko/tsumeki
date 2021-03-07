@@ -2,9 +2,10 @@ import { CommandClient } from 'eris';
 import { TCommand } from '../../command';
 import { logEmbedGenerator } from '../../functions';
 import { stripIndents } from 'common-tags';
+import { TsumekiClient } from '../../client';
 
 export default class Kick extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'kick',
             (msg, [id, ...reason]) => {

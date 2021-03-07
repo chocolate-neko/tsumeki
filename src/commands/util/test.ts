@@ -1,8 +1,9 @@
 import { CommandClient, CommandGenerator, CommandOptions } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 
 export default class Test extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super('test', (msg, args) => {
             msg.channel.createMessage(
                 'this is a test command message that was reloaded',
@@ -22,7 +23,7 @@ export default class Test extends TCommand {
         });
     }
 
-    public registerSubcommands(client: CommandClient) {
+    public registerSubcommands(client: TsumekiClient) {
         client.commands[this.label].registerSubcommand('sub', (msg, args) => {
             msg.channel.createMessage('this is a sub command');
         });

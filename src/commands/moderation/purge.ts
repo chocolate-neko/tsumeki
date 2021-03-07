@@ -1,12 +1,13 @@
 import { stripIndents } from 'common-tags';
 import { CommandClient, GuildTextableChannel } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 import { logEmbedGenerator } from '../../functions';
 
 export default class Purge extends TCommand {
     // TODO Work on purge @high
     // TODO Allow purging of messages by ID
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'purge',
             (msg, [amount]) => {
@@ -68,7 +69,7 @@ export default class Purge extends TCommand {
     }
 
     // TODO Purge user specific messages to the amount specified or until hard limit is reached [100]
-    public registerSubcommands(client: CommandClient) {
+    public registerSubcommands(client: TsumekiClient) {
         client.commands[this.label].registerSubcommand(
             'from',
             (msg, [userId, amount]) => {

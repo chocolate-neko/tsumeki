@@ -1,10 +1,11 @@
 import { stripIndents } from 'common-tags';
 import { CommandClient, Member, User } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 import { getMemberDisplayColour } from '../../functions';
 
 export default class Avatar extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'avatar',
             (msg, args) => {

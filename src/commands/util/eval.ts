@@ -1,10 +1,11 @@
 import { stripIndents } from 'common-tags';
 import { CommandClient } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 import { logEmbedGenerator } from '../../functions';
 
 export default class Eval extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'eval',
             (msg, args) => {
@@ -63,7 +64,7 @@ export default class Eval extends TCommand {
         );
     }
 
-    public registerSubcommands(client: CommandClient) {
+    public registerSubcommands(client: TsumekiClient) {
         client.commands[this.label].registerSubcommand(
             'withOutput',
             (msg, args) => {

@@ -1,4 +1,5 @@
 import { Client, CommandClient } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 import { parseColor } from '../../functions';
 const info: {
@@ -8,7 +9,7 @@ const info: {
 } = require('../../../package.json');
 
 export default class About extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'about',
             (msg, args) => {
@@ -77,7 +78,7 @@ export default class About extends TCommand {
     }
 }
 
-function prefixes(client: CommandClient): string {
+function prefixes(client: TsumekiClient): string {
     let arr: string[] = [];
     for (let i = 0; i < client.commandOptions.prefix.length; i++) {
         if (i % 2 == 0) arr.push(`\`${client.commandOptions.prefix[i]}\``);

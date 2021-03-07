@@ -2,9 +2,10 @@ import { CommandClient } from 'eris';
 import { TCommand } from '../../command';
 import { stripIndents } from 'common-tags';
 import { timeTranslate } from '../../functions';
+import { TsumekiClient } from '../../client';
 
 export default class Ping extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'ping',
             async (msg, args) => {

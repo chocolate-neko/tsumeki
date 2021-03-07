@@ -1,8 +1,9 @@
 import { Command, CommandClient, EmbedOptions } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 
 export default class Help extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'help',
             (msg, args) => {

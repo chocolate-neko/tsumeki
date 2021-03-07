@@ -1,8 +1,9 @@
 import { CommandClient, Guild } from 'eris';
+import { TsumekiClient } from '../../client';
 import { TCommand } from '../../command';
 
 export default class ServerInfo extends TCommand {
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'serverinfo',
             (msg, args) => {

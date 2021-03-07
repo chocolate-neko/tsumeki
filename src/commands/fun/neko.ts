@@ -1,10 +1,11 @@
 import { CommandClient, EmbedOptions } from 'eris';
 import { TCommand } from '../../command';
 import NekoClient from 'nekos.life';
+import { TsumekiClient } from '../../client';
 
 export default class Neko extends TCommand {
     private nekoClient: NekoClient = new NekoClient();
-    constructor(client: CommandClient) {
+    constructor(client: TsumekiClient) {
         super(
             'neko',
             async (msg, args) => {
@@ -32,7 +33,7 @@ export default class Neko extends TCommand {
         );
     }
 
-    public registerSubcommands(client: CommandClient) {
+    public registerSubcommands(client: TsumekiClient) {
         client.commands[this.label].registerSubcommand(
             'sfw',
             async (msg, args) => {
