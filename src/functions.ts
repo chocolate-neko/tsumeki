@@ -115,7 +115,12 @@ export function loadCommands(
                 });
             }
 
+            let catBuffer: string = null;
+            let cmdArr: { label: string; description: string }[] = [];
             results.forEach(([path, category]) => {
+                if (catBuffer != category) cmdArr = [];
+                catBuffer = category;
+
                 logger(
                     `${path} ${chalk`{gray [${category}]}`}`,
                     'DEBUG',
@@ -130,7 +135,14 @@ export function loadCommands(
                 );
                 command.registerSubcommands(client);
 
-                client.commandCategories.set(command.label, category);
+                if (catBuffer == category)
+                    cmdArr.push({
+                        label: command.label,
+                        description: command.description,
+                    });
+
+                if (catBuffer !== null || catBuffer != category)
+                    client.commandCategories.set(catBuffer, cmdArr);
             });
         },
         (f: string) => /.js$/.test(f),

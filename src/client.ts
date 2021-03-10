@@ -9,7 +9,10 @@ import { logger, loadCommands } from './functions';
 
 export class TsumekiClient extends CommandClient {
     // private client: CommandClient;
-    public commandCategories: Map<string, string>;
+    public commandCategories: Map<
+        string,
+        { label: string; description: string }[]
+    >;
 
     constructor(
         token: string,
@@ -17,7 +20,10 @@ export class TsumekiClient extends CommandClient {
         commandOptions?: CommandClientOptions,
     ) {
         super(token, options, commandOptions);
-        this.commandCategories = new Map<string, string>();
+        this.commandCategories = new Map<
+            string,
+            { label: string; description: string }[]
+        >();
 
         loadCommands('./commands', this);
 
