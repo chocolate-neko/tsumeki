@@ -224,6 +224,26 @@ export function parseColor(colorHex: string): number {
     return parseInt(colorHex.replace('#', ''), 16);
 }
 
+export function capitalise(
+    str: string,
+    option?: 'ALLCAPS' | 'ALLSMALL' | 'TITLE',
+): string {
+    switch (option) {
+        case 'ALLCAPS':
+            return str.toUpperCase();
+        case 'ALLSMALL':
+            return str.toLowerCase();
+        case 'TITLE':
+            return str.replace(/\w\S*/g, (text) => {
+                return (
+                    text.charAt(0).toUpperCase() + text.slice(1).toLowerCase()
+                );
+            });
+        default:
+            return str;
+    }
+}
+
 function walk(
     dir: string,
     done: (
