@@ -206,6 +206,9 @@ export function logEmbedGenerator(
         case 'ERROR':
             embed.color = parseColor('#f15b5b');
             break;
+        case 'INVALID':
+            embed.color = parseColor('#ee5d7f');
+            break;
         case 'DEFAULT':
             embed.color = parseColor('#fba7d7');
             break;
