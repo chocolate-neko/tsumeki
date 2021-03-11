@@ -4,7 +4,7 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "build": "node ./build",
+        "start": "node ./build",
         "test": "echo \"Error: no test specified\" && exit 1"
     },
     "author": "",
