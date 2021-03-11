@@ -116,7 +116,11 @@ export function loadCommands(
             }
 
             let catBuffer: string = null;
-            let cmdArr: { label: string; description: string }[] = [];
+            let cmdArr: {
+                label: string;
+                description: string;
+                category: string;
+            }[] = [];
             results.forEach(([path, category]) => {
                 if (catBuffer != category) cmdArr = [];
                 catBuffer = category;
@@ -139,6 +143,7 @@ export function loadCommands(
                     cmdArr.push({
                         label: command.label,
                         description: command.description,
+                        category: category,
                     });
 
                 if (catBuffer !== null || catBuffer != category)

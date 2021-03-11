@@ -11,7 +11,7 @@ export class TsumekiClient extends CommandClient {
     // private client: CommandClient;
     public commandCategories: Map<
         string,
-        { label: string; description: string }[]
+        { label: string; description: string; category: string }[]
     >;
 
     constructor(
@@ -22,7 +22,7 @@ export class TsumekiClient extends CommandClient {
         super(token, options, commandOptions);
         this.commandCategories = new Map<
             string,
-            { label: string; description: string }[]
+            { label: string; description: string; category: string }[]
         >();
 
         loadCommands('./commands', this);
