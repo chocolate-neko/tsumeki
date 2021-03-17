@@ -1,7 +1,7 @@
 {
     "name": "tsumeki_eris",
     "version": "0.1.0",
-    "description": "",
+    "description": "A multi-functional Discord bot written in Typescript and powered by Eris",
     "main": "index.js",
     "scripts": {
         "start": "node ./build",
