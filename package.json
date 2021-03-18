@@ -19,6 +19,6 @@
         "common-tags": "^1.8.0",
         "eris": "^0.14.0",
         "nekos.life": "^2.0.7",
-        "postgres": "^1.0.2"
+        "ts-postgres": "^1.1.3"
     }
 }
