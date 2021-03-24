@@ -16,6 +16,7 @@ export default class Kick extends TCommand {
                         })
                         .then(([member]) => {
                             if (!member) return;
+                            member.kick(reason.join(' '));
                             msg.channel.createMessage({
                                 embed: logEmbedGenerator(
                                     {
@@ -24,7 +25,7 @@ export default class Kick extends TCommand {
                                         } was kicked\nReason:${reason.join(
                                             ' ',
                                         )}`,
-                                        title: 'Fake kick',
+                                        title: 'Member kicked',
                                         footer: `ID: ${member.id}`,
                                     },
                                     'SUCCESS',

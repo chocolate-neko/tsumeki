@@ -15,6 +15,7 @@ export default class Ban extends TCommand {
                         })
                         .then(([member]) => {
                             if (!member) return;
+                            member.ban(undefined, reason.join(' '));
                             msg.channel.createMessage({
                                 embed: logEmbedGenerator(
                                     {
@@ -23,7 +24,7 @@ export default class Ban extends TCommand {
                                         } was banned\nReason:${reason.join(
                                             ' ',
                                         )}`,
-                                        title: 'Fake ban',
+                                        title: 'Member banned',
                                         footer: `ID: ${member.id}`,
                                     },
                                     'SUCCESS',
