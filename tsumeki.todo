@@ -1,6 +1,7 @@
 Tsumeki:
     The Ever Evolving Todo List™:
-        ☐ Command Categories
+        ☐ Improve member join/leave messages
+        ✔ Command Categories @done(21-03-18 16:52)
         ✔ Embed generator (Uniform looking embeds) @done(21-03-05 17:51)
     Base Functions:
         ✔ Extended Eris client (Tsumeki client) @high @done(21-01-25 23:10)
@@ -8,7 +9,8 @@ Tsumeki:
             ✔ Command structure @done(21-01-24 23:11)
             ✔ Sub-commands @done(21-01-28 18:13)
         ✔ Command reloading @done(21-01-28 17:20)
-        ☐ Custom help command @very-premitive @improve
+        ☐ External database to store individual server preferences (PostgreSQL)
+        ✔ Custom help command @very-premitive @done(21-03-17 18:22)
         ☐ Currency system @low
     Information Commands:
         ✔ User info @done(21-02-03 20:45)
@@ -18,6 +20,8 @@ Tsumeki:
         ☐ User profile
             ☐ Stat tracker
     Moderation Commands:
+        ☐ Auto-deletion of foreign server invites
+            ☐ Allow option to turn off invite deletion
         ☐ Ban
         ☐ Kick
         ☐ Purge

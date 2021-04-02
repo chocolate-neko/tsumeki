@@ -5,6 +5,7 @@ import {
     Message,
     TextChannel,
 } from 'eris';
+import DBClient from './db';
 import { logger, loadCommands } from './functions';
 
 export class TsumekiClient extends CommandClient {
@@ -13,6 +14,7 @@ export class TsumekiClient extends CommandClient {
         string,
         { label: string; description: string; category: string }[]
     >;
+    public database: DBClient;
 
     constructor(
         token: string,
@@ -34,11 +36,42 @@ export class TsumekiClient extends CommandClient {
                 'login',
                 this.user.id,
             );
-            console.log(this.commandCategories);
+            this.database = new DBClient();
+            this.database.dbConnect();
+            // this.database.dbInsertMany(
+            //     'test',
+            //     ['col1', 'col2', 'col3'],
+            //     [
+            //         ['hello world!', 'something', 'bloop'],
+            //         ['data4', 'data5', 'data6'],
+            //     ],
+            // );
             this.editStatus('online', {
                 name: `${commandOptions.prefix[0]}help for help ❤`,
                 type: 0,
             });
+        });
+
+        this.on('guildMemberRemove', (guild, member) => {
+            const channel = guild.channels.filter((channel) => {
+                return channel.name == 'tsu-welcome';
+            })[0];
+            if (channel.type == 0) {
+                channel.createMessage(`${member.user.mention} left`);
+            }
+            console.log('member left');
+        });
+
+        this.on('guildMemberAdd', (guild, member) => {
+            const channel = guild.channels.filter((channel) => {
+                return channel.name == 'tsu-welcome';
+            })[0];
+            if (channel.type == 0) {
+                channel.createMessage(
+                    `Welcome ${member.mention} to ${guild.name}!`,
+                );
+            }
+            console.log('member joined');
         });
 
         // Little easter-egg for fun 😋
