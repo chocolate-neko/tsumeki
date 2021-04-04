@@ -28,7 +28,7 @@ interface LoggerOptions {
     logType?: LogType;
     headerText?: any;
     endText?: any;
-    customOptions?: { displayText: string; displayColor: string };
+    customOptions?: { customLogType: string; displayColor: string };
 }
 
 export function logger(options: LoggerOptions) {
@@ -80,6 +80,25 @@ export function logger(options: LoggerOptions) {
         case 'DEBUG':
             console.log(
                 chalk`{bold.magenta [DEBUG${
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
+            );
+            break;
+        case 'CUSTOM':
+            const customOptions = options.customOptions
+                ? options.customOptions
+                : {
+                      customLogType: 'Type not defined',
+                      displayColor: 'bold.cyan',
+                  };
+            console.log(
+                chalk`{${
+                    customOptions.displayColor
+                } [${customOptions.customLogType.toUpperCase()}${
                     options.headerText
                         ? `/${options.headerText.toUpperCase()}`
                         : ''

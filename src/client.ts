@@ -79,12 +79,31 @@ export class TsumekiClient extends CommandClient {
                 ['guildid', 'guildname'],
                 [guild.id, guild.name],
             );
+            logger({
+                message: `I've joined ${guild.name}!`,
+                logType: 'CUSTOM',
+                headerText: 'Server',
+                customOptions: {
+                    customLogType: 'Join',
+                    displayColor: 'green.bold',
+                },
+            });
         });
 
         this.on('guildDelete', async (guild) => {
             this.database.dbQuery('DELETE FROM guildids WHERE guildid = $1', [
                 guild.id,
             ]);
+            logger({
+                message: "I've been removed from a guild",
+                logType: 'CUSTOM',
+                headerText: 'Server',
+                endText: guild.id,
+                customOptions: {
+                    customLogType: 'Leave',
+                    displayColor: 'yellow.bold',
+                },
+            });
         });
 
         // Little easter-egg for fun 😋
