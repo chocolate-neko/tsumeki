@@ -13,7 +13,11 @@ export default class Reload extends TCommand {
                 );
                 for (const cmd in client.commands) {
                     client.unregisterCommand(cmd);
-                    logger(`Unregistered command: ${cmd}`, 'LOG', 'cmd reload');
+                    logger({
+                        message: `Unregistered command: ${cmd}`,
+                        logType: 'LOG',
+                        headerText: 'cmd reload',
+                    });
                 }
                 loadCommands('./commands', client, true);
                 reloading.edit('Reloaded commands!');

@@ -30,12 +30,12 @@ export class TsumekiClient extends CommandClient {
         loadCommands('./commands', this);
 
         this.on('ready', () => {
-            logger(
-                `Logged in as ${this.user.username}#${this.user.discriminator}`,
-                'LOG',
-                'login',
-                this.user.id,
-            );
+            logger({
+                message: `Logged in as ${this.user.username}#${this.user.discriminator}`,
+                logType: 'LOG',
+                headerText: 'login',
+                endText: this.user.id,
+            });
             this.database = new DBClient();
             this.database.dbConnect();
             this.database.dbGuildIDCheck(this.guilds);
@@ -60,7 +60,6 @@ export class TsumekiClient extends CommandClient {
             if (channel.type == 0) {
                 channel.createMessage(`${member.user.mention} left`);
             }
-            console.log('member left');
         });
 
         this.on('guildMemberAdd', (guild, member) => {
@@ -72,7 +71,20 @@ export class TsumekiClient extends CommandClient {
                     `Welcome ${member.mention} to ${guild.name}!`,
                 );
             }
-            console.log('member joined');
+        });
+
+        this.on('guildCreate', async (guild) => {
+            this.database.dbInsert(
+                'guildids',
+                ['guildid', 'guildname'],
+                [guild.id, guild.name],
+            );
+        });
+
+        this.on('guildDelete', async (guild) => {
+            this.database.dbQuery('DELETE FROM guildids WHERE guildid = $1', [
+                guild.id,
+            ]);
         });
 
         // Little easter-egg for fun 😋

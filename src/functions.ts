@@ -10,7 +10,7 @@ import {
 } from 'eris';
 import { TCommand } from './command';
 import { TsumekiClient } from './client';
-type LogType = 'LOG' | 'WARN' | 'ERROR' | 'SUCCESS' | 'DEBUG';
+type LogType = 'LOG' | 'WARN' | 'ERROR' | 'SUCCESS' | 'DEBUG' | 'CUSTOM';
 type EmbedType = 'WARNING' | 'ERROR' | 'INVALID' | 'SUCCESS' | 'DEFAULT';
 
 interface EmbedGeneratorOptions {
@@ -23,53 +23,80 @@ interface EmbedGeneratorOptions {
     timestamp?: boolean;
 }
 
-export function logger(
-    msg: any,
-    logType?: LogType,
-    headerText?: any,
-    endText?: any,
-) {
-    switch (logType) {
+interface LoggerOptions {
+    message: any;
+    logType?: LogType;
+    headerText?: any;
+    endText?: any;
+    customOptions?: { displayText: string; displayColor: string };
+}
+
+export function logger(options: LoggerOptions) {
+    switch (options.logType) {
         case 'LOG':
             console.log(
                 chalk`{bold.cyan [LOG${
-                    headerText ? `/${headerText.toUpperCase()}` : ''
-                }]} ${msg} ${endText ? chalk`{grey [${endText}]}` : ''}`,
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
             );
             break;
         case 'WARN':
             console.log(
                 chalk`{bold.yellowBright [WARN${
-                    headerText ? `/${headerText.toUpperCase()}` : ''
-                }]} ${msg} ${endText ? chalk`{grey [${endText}]}` : ''}`,
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
             );
             break;
         case 'ERROR':
             console.log(
                 chalk`{bold.black.bgRed [ERROR${
-                    headerText ? `/${headerText.toUpperCase()}` : ''
-                }]} ${msg} ${endText ? chalk`{grey [${endText}]}` : ''}`,
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
             );
             break;
         case 'SUCCESS':
             console.log(
                 chalk`{bold.greenBright [SUCCESS${
-                    headerText ? `/${headerText.toUpperCase()}` : ''
-                }]} ${msg} ${endText ? chalk`{grey [${endText}]}` : ''}`,
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
             );
             break;
         case 'DEBUG':
             console.log(
                 chalk`{bold.magenta [DEBUG${
-                    headerText ? `/${headerText.toUpperCase()}` : ''
-                }]} ${msg} ${endText ? chalk`{grey [${endText}]}` : ''}`,
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
             );
             break;
         default:
             console.log(
                 chalk`{bold.magenta [DEBUG${
-                    headerText ? `/${headerText.toUpperCase()}` : ''
-                }]} ${msg} ${endText ? chalk`{grey [${endText}]}` : ''}`,
+                    options.headerText
+                        ? `/${options.headerText.toUpperCase()}`
+                        : ''
+                }]} ${options.message} ${
+                    options.endText ? chalk`{grey [${options.endText}]}` : ''
+                }`,
             );
     }
 }
@@ -100,14 +127,19 @@ export function loadCommands(
     walk(
         resolvedPath,
         (err, results) => {
-            if (err) return logger(err.message, 'ERROR', 'file load');
+            if (err)
+                return logger({
+                    message: err.message,
+                    logType: 'ERROR',
+                    headerText: 'file load',
+                });
             if (!results)
-                return logger(
-                    'Empty file directory!',
-                    'WARN',
-                    'file load',
-                    resolvedPath,
-                );
+                return logger({
+                    message: 'Empty file directory!',
+                    logType: 'WARN',
+                    headerText: 'file load',
+                    endText: resolvedPath,
+                });
 
             if (reload) {
                 results.forEach((file) => {
@@ -125,11 +157,11 @@ export function loadCommands(
                 if (catBuffer != category) cmdArr = [];
                 catBuffer = category;
 
-                logger(
-                    `${path} ${chalk`{gray [${category}]}`}`,
-                    'DEBUG',
-                    'file load',
-                );
+                logger({
+                    message: `${path} ${chalk`{gray [${category}]}`}`,
+                    logType: 'DEBUG',
+                    headerText: 'file load',
+                });
 
                 const command: TCommand = new (require(path).default)(client);
                 client.registerCommand(
@@ -259,12 +291,13 @@ function walk(
         }
         let pending = list.length;
         if (!pending) {
-            logger(
-                'Potentially empty directory or invalid directory, please check directory path.',
-                'WARN',
-                'file load',
-                dir,
-            );
+            logger({
+                message:
+                    'Potentially empty directory or invalid directory, please check directory path.',
+                logType: 'WARN',
+                headerText: 'file load',
+                endText: dir,
+            });
             return done(null, results);
         }
         list.forEach((file: string) => {

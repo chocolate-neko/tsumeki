@@ -7,20 +7,28 @@ export default class DBClient {
     public client: Client;
     constructor() {
         this.client = new Client(dbClientConfig);
-        logger('Database initialised...', 'LOG', 'Database');
+        logger({
+            message: 'Database initialised...',
+            logType: 'LOG',
+            headerText: 'Database',
+        });
     }
 
     public async dbConnect() {
         try {
             await this.client.connect().then((conn) => {
-                logger(
-                    'Database connected successfully!',
-                    'SUCCESS',
-                    'Database',
-                );
+                logger({
+                    message: 'Database connected successfully!',
+                    logType: 'SUCCESS',
+                    headerText: 'Database',
+                });
             });
         } catch (err) {
-            logger(err.message, 'ERROR', 'Database');
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
         }
     }
 
@@ -36,16 +44,44 @@ export default class DBClient {
                         'INSERT INTO guildids(guildid, guildname) VALUES ($1, $2)',
                         [guild.id, guild.name],
                     );
-                    logger(
-                        'Undefined guild found, inserting...',
-                        'LOG',
-                        'Database',
-                    );
+                    logger({
+                        message: 'Undefined guild found, inserting...',
+                        logType: 'LOG',
+                        headerText: 'Database',
+                    });
                 }
                 console.log(found);
             });
         } catch (err) {
-            logger(err.message, 'ERROR', 'Database');
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
+        }
+    }
+
+    public async dbInsert(table: string, cols: string[], values: any[]) {
+        let insertValues = '(';
+        let valueTicker = 1;
+        values.forEach((value, index) => {
+            insertValues += `$${valueTicker}`;
+            valueTicker++;
+            if (index != values.length - 1) insertValues += ',';
+        });
+        insertValues += ')';
+        try {
+            const res = await this.client.query(
+                `INSERT INTO ${table}(${cols.toString()}) VALUES ${insertValues}`,
+                values,
+            );
+            return res;
+        } catch (err) {
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
         }
     }
 
@@ -54,7 +90,11 @@ export default class DBClient {
             const res = await this.client.query(query, values);
             return res;
         } catch (err) {
-            logger(err.message, 'ERROR', 'Database');
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
         }
     }
 
@@ -86,7 +126,11 @@ export default class DBClient {
             );
             return res;
         } catch (err) {
-            logger(err.message, 'ERROR', 'Database');
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
         }
     }
 }
