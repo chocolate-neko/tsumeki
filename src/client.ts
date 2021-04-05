@@ -112,7 +112,10 @@ export class TsumekiClient extends CommandClient {
                 message.content === `<@${this.user.id}>` ||
                 message.content === `<@!${this.user.id}>`
             ) {
-                message.channel.createMessage(`yes? ${message.author.mention}`);
+                this.createMessage(
+                    message.channel.id,
+                    `yes? ${message.author.mention}`,
+                );
             }
         });
 

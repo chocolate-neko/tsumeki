@@ -30,9 +30,9 @@ export default class Eval extends TCommand {
                     })
                     .catch((err) => {
                         err = err.toString();
-                        if (err.includes(client.token)) {
+                        if (err.includes((<any>client)._token)) {
                             err = err.replace(
-                                client.token,
+                                (<any>client)._token,
                                 'token.1234.nicetry',
                             );
                         }
@@ -82,9 +82,9 @@ export default class Eval extends TCommand {
                                 depth: 1,
                             });
                         }
-                        if (output.includes(client.token!)) {
+                        if (output.includes((<any>client)._token!)) {
                             output = output.replace(
-                                client.token!,
+                                (<any>client)._token!,
                                 'token.1234.nicetry',
                             );
                         }
@@ -94,9 +94,9 @@ export default class Eval extends TCommand {
                     })
                     .catch((err) => {
                         err = err.toString();
-                        if (err.includes(client.token)) {
+                        if (err.includes((<any>client)._token)) {
                             err = err.replace(
-                                client.token,
+                                (<any>client).token,
                                 'token.1234.nicetry',
                             );
                         }
