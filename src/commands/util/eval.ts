@@ -60,6 +60,18 @@ export default class Eval extends TCommand {
                     });
                     return '';
                 },
+                permissionMessage: (msg) => {
+                    msg.channel.createMessage({
+                        embed: logEmbedGenerator({
+                            description:
+                                'you lack the permissions to use this command!',
+                        }),
+                    });
+                    return '';
+                },
+                requirements: {
+                    userIDs: ['170752668854255617'],
+                },
             },
         );
     }
@@ -124,6 +136,18 @@ export default class Eval extends TCommand {
                         }),
                     });
                     return '';
+                },
+                permissionMessage: (msg) => {
+                    msg.channel.createMessage({
+                        embed: logEmbedGenerator({
+                            description:
+                                'you lack the permissions to use this command!',
+                        }),
+                    });
+                    return '';
+                },
+                requirements: {
+                    userIDs: ['170752668854255617'],
                 },
             },
         );
