@@ -5,6 +5,7 @@ import {
     Message,
     TextChannel,
 } from 'eris';
+import { GuildSchema } from './@types/index';
 import DBClient from './db';
 import { logger, loadCommands } from './functions';
 
@@ -74,11 +75,10 @@ export class TsumekiClient extends CommandClient {
         });
 
         this.on('guildCreate', async (guild) => {
-            this.database.dbInsert(
-                'guildids',
-                ['guildid', 'guildname'],
-                [guild.id, guild.name],
-            );
+            this.database.dbInsert('guilds', <GuildSchema>{
+                guildid: guild.id,
+                guildname: guild.name,
+            });
             logger({
                 message: `I've joined ${guild.name}!`,
                 logType: 'CUSTOM',
@@ -91,9 +91,7 @@ export class TsumekiClient extends CommandClient {
         });
 
         this.on('guildDelete', async (guild) => {
-            this.database.dbQuery('DELETE FROM guildids WHERE guildid = $1', [
-                guild.id,
-            ]);
+            this.database.dbDeleteOne('guilds', { guildid: guild.id });
             logger({
                 message: "I've been removed from a guild",
                 logType: 'CUSTOM',

@@ -2,3 +2,4 @@
 /build
 /token.json
 /dbconfig.json
+/dbconfig_pg.json
