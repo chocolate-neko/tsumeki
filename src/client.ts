@@ -40,6 +40,7 @@ export class TsumekiClient extends CommandClient {
             this.database = new DBClient();
             this.database.dbConnect();
             this.database.dbGuildIDCheck(this.guilds);
+            this.database.dbMemberIDCheck(this.guilds);
             // this.database.dbInsertMany(
             //     'test',
             //     ['col1', 'col2', 'col3'],

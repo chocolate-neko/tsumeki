@@ -1,4 +1,4 @@
-import { Collection, Guild } from 'eris';
+import { Collection, Guild, Member } from 'eris';
 import mongoose, {
     Connection,
     Document,
@@ -6,7 +6,7 @@ import mongoose, {
     Model,
     Schema,
 } from 'mongoose';
-import { GuildSchema } from './@types';
+import { GuildSchema, UserSchema } from './@types';
 import { logger } from './functions';
 const dbConfig: {
     url: string;
@@ -77,6 +77,46 @@ export default class DBClient {
                     });
                     logger({
                         message: 'Undefined guild found, inserting...',
+                        logType: 'LOG',
+                        headerText: 'Database',
+                    });
+                }
+            });
+        } catch (err) {
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
+        }
+    }
+
+    public async dbMemberIDCheck(guilds: Collection<Guild>) {
+        try {
+            const queriedMembers = await this.users.find({});
+            guilds.forEach(async (guild) => {
+                let memberCounter = 0;
+                const members = await guild.fetchMembers();
+                members.forEach((member) => {
+                    const found = queriedMembers.find((doc) => {
+                        return (
+                            doc.get('userid') == member.id &&
+                            doc.get('guildid') == member.guild.id
+                        );
+                    });
+                    if (!found) {
+                        this.dbInsert('users', <UserSchema>{
+                            guildid: member.guild.id,
+                            userid: member.id,
+                            userlevel: 0,
+                            userwallet: 0,
+                        });
+                        memberCounter++;
+                    }
+                });
+                if (memberCounter != 0) {
+                    logger({
+                        message: `Inserted ${memberCounter} new members from ${guild.name} into user database`,
                         logType: 'LOG',
                         headerText: 'Database',
                     });
