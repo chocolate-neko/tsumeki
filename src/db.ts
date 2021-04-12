@@ -63,7 +63,7 @@ export default class DBClient {
         });
     }
 
-    public async dbGuildIDCheck(guilds?: Collection<Guild>) {
+    public async dbGuildIDCheck(guilds: Collection<Guild>) {
         try {
             const queriedGuilds = await this.guilds.find({});
             guilds.forEach((guild) => {
