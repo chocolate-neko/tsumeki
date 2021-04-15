@@ -40,7 +40,7 @@ export class TsumekiClient extends CommandClient {
             this.database = new DBClient();
             this.database.dbConnect();
             this.database.dbGuildIDCheck(this.guilds);
-            this.database.dbMemberIDCheck(this.guilds);
+            // this.database.dbMemberIDCheck(this.guilds);
             // this.database.dbInsertMany(
             //     'test',
             //     ['col1', 'col2', 'col3'],
@@ -106,7 +106,26 @@ export class TsumekiClient extends CommandClient {
         });
 
         // Little easter-egg for fun 😋
-        this.on('messageCreate', (message) => {
+        this.on('messageCreate', async (message) => {
+            const userAlreadyExists = await this.database.dbMemberIDCheck(
+                message.author,
+                message.guildID,
+            );
+            if (userAlreadyExists) {
+                let walletAmt = (
+                    await this.database.dbRetrieveOne('users', {
+                        guildid: message.guildID,
+                        userid: message.author.id,
+                    })
+                ).get('userwallet');
+                walletAmt += walletAmt;
+                console.log(walletAmt);
+                this.database.dbUpdateData(
+                    'users',
+                    { guildid: message.guildID, userid: message.author.id },
+                    { userwallet: walletAmt },
+                );
+            }
             if (
                 message.content === `<@${this.user.id}>` ||
                 message.content === `<@!${this.user.id}>`

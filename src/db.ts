@@ -1,10 +1,11 @@
-import { Collection, Guild, Member } from 'eris';
+import { Collection, Guild, Member, User } from 'eris';
 import mongoose, {
     Connection,
     Document,
     FilterQuery,
     Model,
     Schema,
+    UpdateQuery,
 } from 'mongoose';
 import { GuildSchema, UserSchema } from './@types';
 import { logger } from './functions';
@@ -38,7 +39,15 @@ export default class DBClient {
         // Begin schema & model creation
         this.guilds = mongoose.model(
             'guilds',
-            new Schema({ guildid: String, guildname: String }),
+            new Schema({
+                guildid: String,
+                guildname: String,
+                options: {
+                    displaywelcomemessage: Boolean,
+                    welcomemessage: String,
+                    welcomechannelid: String,
+                },
+            }),
         );
         this.users = mongoose.model(
             'users',
@@ -74,6 +83,11 @@ export default class DBClient {
                     this.dbInsert('guilds', <GuildSchema>{
                         guildid: guild.id,
                         guildname: guild.name,
+                        options: {
+                            displaywelcomemessage: true,
+                            welcomemessage: 'Welcome {user} to {server}!',
+                            welcomechannelid: guild.systemChannelID,
+                        },
                     });
                     logger({
                         message: 'Undefined guild found, inserting...',
@@ -91,40 +105,32 @@ export default class DBClient {
         }
     }
 
-    public async dbMemberIDCheck(guilds: Collection<Guild>) {
+    public async dbMemberIDCheck(member: User, guildid: string) {
         try {
-            const queriedMembers = await this.users.find({});
-            guilds.forEach(async (guild) => {
-                let memberCounter = 0;
-                const members = await guild.fetchMembers();
-                members.forEach((member) => {
-                    const found = queriedMembers.find((doc) => {
-                        return (
-                            doc.get('userid') == member.id &&
-                            doc.get('guildid') == member.guild.id
-                        );
-                    });
-                    if (!found) {
-                        this.dbInsert('users', <UserSchema>{
-                            guildid: member.guild.id,
-                            userid: member.id,
-                            userlevel: 0,
-                            userwallet: 0,
-                        });
-                        memberCounter++;
-                    }
-                });
-                if (memberCounter != 0) {
-                    logger({
-                        message: `Inserted ${memberCounter} new members from ${guild.name} into user database`,
-                        logType: 'LOG',
-                        headerText: 'Database',
-                    });
-                }
+            const foundUser = (
+                await this.users.find({ guildid: guildid, userid: member.id })
+            ).find((doc) => {
+                return doc.get('userid') == member.id;
             });
+            if (!foundUser) {
+                this.dbInsert('users', <UserSchema>{
+                    guildid: guildid,
+                    userid: member.id,
+                    userlevel: 0,
+                    userwallet: 0,
+                });
+                logger({
+                    message: `New user inserted into user database: ${member.id}`,
+                    logType: 'LOG',
+                    headerText: 'Database',
+                });
+                return false;
+            } else {
+                return true;
+            }
         } catch (err) {
             logger({
-                message: err.message,
+                message: err.messasge,
                 logType: 'ERROR',
                 headerText: 'Database',
             });
@@ -159,6 +165,61 @@ export default class DBClient {
                     customLogType: 'Insert',
                     displayColor: 'bold.black.bgRed',
                 },
+                headerText: 'Database',
+            });
+        }
+    }
+
+    public async dbUpdateData(
+        model: string,
+        filter: FilterQuery<Document>,
+        update: UpdateQuery<Document>,
+    ) {
+        if (!this.hasOwnProperty(model)) {
+            return logger({
+                message: `Model '${model}' does not exist`,
+                logType: 'WARN',
+                headerText: 'Database',
+            });
+        }
+
+        try {
+            const res = await (<Model<Document>>(<any>this)[model]).updateOne(
+                filter,
+                update,
+            );
+            logger({
+                message: `Updated 1 document`,
+                logType: 'DEBUG',
+                headerText: 'Database',
+            });
+        } catch (err) {
+            logger({
+                message: err.message,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
+        }
+    }
+
+    public async dbRetrieveOne(model: string, filter: FilterQuery<Document>) {
+        if (this.hasOwnProperty(model)) {
+            try {
+                const res = await (<Model<Document>>(<any>this)[model]).findOne(
+                    filter,
+                );
+                return res;
+            } catch (err) {
+                logger({
+                    message: err.message,
+                    logType: 'ERROR',
+                    headerText: 'Database',
+                });
+            }
+        } else {
+            logger({
+                message: `Model '${model}' does not exist`,
+                logType: 'WARN',
                 headerText: 'Database',
             });
         }
