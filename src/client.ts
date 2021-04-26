@@ -40,15 +40,6 @@ export class TsumekiClient extends CommandClient {
             this.database = new DBClient();
             this.database.dbConnect();
             this.database.dbGuildIDCheck(this.guilds);
-            // this.database.dbMemberIDCheck(this.guilds);
-            // this.database.dbInsertMany(
-            //     'test',
-            //     ['col1', 'col2', 'col3'],
-            //     [
-            //         ['hello world!', 'something', 'bloop'],
-            //         ['data4', 'data5', 'data6'],
-            //     ],
-            // );
             this.editStatus('online', {
                 name: `${commandOptions.prefix[0]}help for help ❤`,
                 type: 0,
@@ -105,42 +96,34 @@ export class TsumekiClient extends CommandClient {
             });
         });
 
-        // Little easter-egg for fun 😋
         this.on('messageCreate', async (message) => {
             const userAlreadyExists = await this.database.dbMemberIDCheck(
                 message.author,
                 message.guildID,
             );
             if (userAlreadyExists) {
-                let walletAmt = (
-                    await this.database.dbRetrieveOne('users', {
+                let walletAmt: number = (
+                    await this.database.dbRetrieveOne('guilds', {
                         guildid: message.guildID,
-                        userid: message.author.id,
+                        'users.userid': message.author.id,
                     })
-                ).get('userwallet');
-                walletAmt += walletAmt;
+                ).get('users.userwallet');
+                walletAmt++;
                 console.log(walletAmt);
                 this.database.dbUpdateData(
-                    'users',
-                    { guildid: message.guildID, userid: message.author.id },
-                    { userwallet: walletAmt },
-                );
-            }
-            if (
-                message.content === `<@${this.user.id}>` ||
-                message.content === `<@!${this.user.id}>`
-            ) {
-                this.createMessage(
-                    message.channel.id,
-                    `yes? ${message.author.mention}`,
+                    'guilds',
+                    {
+                        guildid: message.guildID,
+                        'users.userid': message.author.id,
+                    },
+                    {
+                        $set: {
+                            'users.$.userwallet': walletAmt,
+                        },
+                    },
                 );
             }
         });
-
-        // this.client.on("messageCreate", (message: Message) => {
-        //     if (message.author.bot) return;
-        //     if (!message.command) return;
-        // });
     }
 
     public run() {

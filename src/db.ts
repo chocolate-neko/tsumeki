@@ -17,7 +17,7 @@ const dbConfig: {
 export default class DBClient {
     private db: Connection;
     private guilds: Model<Document>;
-    private users: Model<Document>;
+    // private users: Model<Document>;
     constructor() {
         // Check mongodb connection
         this.db = mongoose.connection;
@@ -47,17 +47,24 @@ export default class DBClient {
                     welcomemessage: String,
                     welcomechannelid: String,
                 },
+                users: [
+                    new Schema({
+                        userid: String,
+                        userwallet: Number,
+                        userlevel: Number,
+                    }),
+                ],
             }),
         );
-        this.users = mongoose.model(
-            'users',
-            new Schema({
-                guildid: String,
-                userid: String,
-                userwallet: Number,
-                userlevel: Number,
-            }),
-        );
+        // this.users = mongoose.model(
+        //     'users',
+        //     new Schema({
+        //         guildid: String,
+        //         userid: String,
+        //         userwallet: Number,
+        //         userlevel: Number,
+        //     }),
+        // );
     }
 
     public dbConnect() {
@@ -88,6 +95,7 @@ export default class DBClient {
                             welcomemessage: 'Welcome {user} to {server}!',
                             welcomechannelid: guild.systemChannelID,
                         },
+                        users: [],
                     });
                     logger({
                         message: 'Undefined guild found, inserting...',
@@ -107,18 +115,24 @@ export default class DBClient {
 
     public async dbMemberIDCheck(member: User, guildid: string) {
         try {
-            const foundUser = (
-                await this.users.find({ guildid: guildid, userid: member.id })
-            ).find((doc) => {
-                return doc.get('userid') == member.id;
+            const foundUser = await this.guilds.findOne({
+                guildid: guildid,
+                'users.userid': member.id,
             });
             if (!foundUser) {
-                this.dbInsert('users', <UserSchema>{
-                    guildid: guildid,
-                    userid: member.id,
-                    userlevel: 0,
-                    userwallet: 0,
-                });
+                this.dbUpdateData(
+                    'guilds',
+                    { guildid: guildid },
+                    {
+                        $push: {
+                            users: <UserSchema>{
+                                userid: member.id,
+                                userwallet: 0,
+                                userlevel: 0,
+                            },
+                        },
+                    },
+                );
                 logger({
                     message: `New user inserted into user database: ${member.id}`,
                     logType: 'LOG',

@@ -7,10 +7,10 @@ declare namespace Database {
             welcomemessage: string;
             welcomechannelid: string;
         };
+        users: [];
     }
 
     interface UserSchema {
-        guildid: string;
         userid: string;
         userwallet: number;
         userlevel: number;
