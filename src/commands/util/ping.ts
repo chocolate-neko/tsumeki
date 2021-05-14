@@ -10,7 +10,7 @@ export default class Ping extends TCommand {
             'ping',
             async (msg, args) => {
                 const pingMsg = await msg.channel.createMessage('Pinging...');
-                return pingMsg.edit(stripIndents`
+                pingMsg.edit(stripIndents`
                     Pong🏓
                     Bot: \`${pingMsg.timestamp - msg.timestamp}ms\`
                     Uptime: \`${timeTranslate(client.uptime)}\`

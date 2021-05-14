@@ -16,7 +16,7 @@ export default class Help extends TCommand {
                         client.commands[command].permissionCheck(msg) &&
                         !client.commands[command].hidden
                     ) {
-                        return msg.channel.createMessage({
+                        msg.channel.createMessage({
                             embed: {
                                 title: `${capitalise(
                                     `${client.commands[command].label} ${client.commands[command].usage}`,
@@ -41,8 +41,9 @@ export default class Help extends TCommand {
                                 ],
                             },
                         });
+                        return;
                     }
-                    return msg.channel.createMessage({
+                    msg.channel.createMessage({
                         embed: logEmbedGenerator(
                             {
                                 description: `Command ${command} doesn't exist`,
@@ -50,6 +51,7 @@ export default class Help extends TCommand {
                             'INVALID',
                         ),
                     });
+                    return;
                 } else {
                     let commandEmbed: EmbedOptions = {
                         author: {
@@ -80,7 +82,8 @@ export default class Help extends TCommand {
                             value: cmdList,
                         });
                     });
-                    return msg.channel.createMessage({ embed: commandEmbed });
+                    msg.channel.createMessage({ embed: commandEmbed });
+                    return;
                 }
             },
             {
