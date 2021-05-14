@@ -17,7 +17,8 @@ const dbConfig: {
 export default class DBClient {
     private db: Connection;
     private guilds: Model<Document>;
-    // private users: Model<Document>;
+    private users: Model<Document>;
+    private shop: Model<Document>; // TODO: Implement shop system
     constructor() {
         // Check mongodb connection
         this.db = mongoose.connection;
@@ -40,18 +41,28 @@ export default class DBClient {
         this.guilds = mongoose.model(
             'guilds',
             new Schema({
-                guildid: String,
-                guildname: String,
+                id: String,
+                name: String,
                 options: {
                     displaywelcomemessage: Boolean,
                     welcomemessage: String,
                     welcomechannelid: String,
                 },
-                users: [
+            }),
+        );
+
+        this.users = mongoose.model(
+            'users',
+            new Schema({
+                id: String,
+                globalprofile: {
+                    wallet: Number,
+                    level: Number,
+                    inventory: [String],
+                },
+                guildprofiles: [
                     new Schema({
-                        userid: String,
-                        userwallet: Number,
-                        userlevel: Number,
+                        guildid: String,
                     }),
                 ],
             }),
@@ -84,18 +95,19 @@ export default class DBClient {
             const queriedGuilds = await this.guilds.find({});
             guilds.forEach((guild) => {
                 const found = queriedGuilds.find((doc) => {
-                    return doc.get('guildid') == guild.id;
+                    return doc.get('id') == guild.id;
                 });
                 if (!found) {
                     this.dbInsert('guilds', <GuildSchema>{
-                        guildid: guild.id,
-                        guildname: guild.name,
+                        id: guild.id,
+                        name: guild.name,
                         options: {
-                            displaywelcomemessage: true,
+                            displaywelcomemessage: guild.systemChannelID
+                                ? true
+                                : false,
                             welcomemessage: 'Welcome {user} to {server}!',
                             welcomechannelid: guild.systemChannelID,
                         },
-                        users: [],
                     });
                     logger({
                         message: 'Undefined guild found, inserting...',
@@ -113,26 +125,30 @@ export default class DBClient {
         }
     }
 
-    public async dbMemberIDCheck(member: User, guildid: string) {
+    public async dbMemberGuildProfileCheck(
+        member: Member,
+        guilds: Collection<Guild>,
+    ) {
+        // TODO: Implement guild profiles when a member speaks in another guild
+        return;
+    }
+
+    public async dbMemberIDCheck(member: Member) {
         try {
-            const foundUser = await this.guilds.findOne({
-                guildid: guildid,
-                'users.userid': member.id,
+            const foundUser = await this.users.findOne({
+                id: member.id,
             });
             if (!foundUser) {
-                this.dbUpdateData(
-                    'guilds',
-                    { guildid: guildid },
-                    {
-                        $push: {
-                            users: <UserSchema>{
-                                userid: member.id,
-                                userwallet: 0,
-                                userlevel: 0,
-                            },
-                        },
+                this.dbInsert('users', <UserSchema>{
+                    id: member.id,
+                    globalprofile: {
+                        wallet: 0,
+                        level: 0,
+                        inventory: [],
                     },
-                );
+                    // initiate the first guild profile when the member first starts out
+                    guildprofiles: [{ guildid: member.guild.id }],
+                });
                 logger({
                     message: `New user inserted into user database: ${member.id}`,
                     logType: 'LOG',

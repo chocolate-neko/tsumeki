@@ -1,19 +1,24 @@
 declare namespace Database {
     interface GuildSchema {
-        guildid: string;
-        guildname: string;
+        id: string;
+        name: string;
         options: {
             displaywelcomemessage: boolean;
             welcomemessage: string;
             welcomechannelid: string;
         };
-        users: [];
     }
 
     interface UserSchema {
-        userid: string;
-        userwallet: number;
-        userlevel: number;
+        id: String;
+        globalprofile: {
+            wallet: Number;
+            level: Number;
+            inventory: String[];
+        };
+        guildprofiles: {
+            guildid: String;
+        }[];
     }
 }
 

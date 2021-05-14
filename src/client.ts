@@ -68,8 +68,8 @@ export class TsumekiClient extends CommandClient {
 
         this.on('guildCreate', async (guild) => {
             this.database.dbInsert('guilds', <GuildSchema>{
-                guildid: guild.id,
-                guildname: guild.name,
+                id: guild.id,
+                name: guild.name,
             });
             logger({
                 message: `I've joined ${guild.name}!`,
@@ -98,27 +98,24 @@ export class TsumekiClient extends CommandClient {
 
         this.on('messageCreate', async (message) => {
             const userAlreadyExists = await this.database.dbMemberIDCheck(
-                message.author,
-                message.guildID,
+                message.member,
             );
             if (userAlreadyExists) {
                 let walletAmt: number = (
-                    await this.database.dbRetrieveOne('guilds', {
-                        guildid: message.guildID,
-                        'users.userid': message.author.id,
+                    await this.database.dbRetrieveOne('users', {
+                        id: message.author.id,
                     })
-                ).get('users.userwallet');
+                ).get('profile.wallet');
                 walletAmt++;
                 console.log(walletAmt);
                 this.database.dbUpdateData(
-                    'guilds',
+                    'users',
                     {
-                        guildid: message.guildID,
-                        'users.userid': message.author.id,
+                        id: message.author.id,
                     },
                     {
                         $set: {
-                            'users.$.userwallet': walletAmt,
+                            'profile.wallet': walletAmt,
                         },
                     },
                 );
