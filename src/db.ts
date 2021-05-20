@@ -58,11 +58,14 @@ export default class DBClient {
                 globalprofile: {
                     wallet: Number,
                     level: Number,
+                    exp: Number,
                     inventory: [String],
                 },
                 guildprofiles: [
                     new Schema({
                         guildid: String,
+                        level: Number,
+                        exp: Number,
                     }),
                 ],
             }),
@@ -129,8 +132,34 @@ export default class DBClient {
         member: Member,
         guilds: Collection<Guild>,
     ) {
-        // TODO: Implement guild profiles when a member speaks in another guild
-        return;
+        try {
+            const memberInGuild = guilds.find((guild) => guild == member.guild);
+            const guildProfileExists = await this.users.findOne({
+                id: member.id,
+                'guildprofiles.guildid': member.guild.id,
+            });
+            if (memberInGuild && !guildProfileExists) {
+                this.dbUpdateData(
+                    'users',
+                    { id: member.id },
+                    {
+                        $push: {
+                            guildprofiles: {
+                                guildid: member.guild.id,
+                                level: 0,
+                                exp: 0.0,
+                            },
+                        },
+                    },
+                );
+            }
+        } catch (err) {
+            logger({
+                message: err.messasge,
+                logType: 'ERROR',
+                headerText: 'Database',
+            });
+        }
     }
 
     public async dbMemberIDCheck(member: Member) {
@@ -144,10 +173,13 @@ export default class DBClient {
                     globalprofile: {
                         wallet: 0,
                         level: 0,
+                        exp: 0.0,
                         inventory: [],
                     },
                     // initiate the first guild profile when the member first starts out
-                    guildprofiles: [{ guildid: member.guild.id }],
+                    guildprofiles: [
+                        { guildid: member.guild.id, level: 0, exp: 0.0 },
+                    ],
                 });
                 logger({
                     message: `New user inserted into user database: ${member.id}`,

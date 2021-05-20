@@ -101,11 +101,15 @@ export class TsumekiClient extends CommandClient {
                 message.member,
             );
             if (userAlreadyExists) {
+                this.database.dbMemberGuildProfileCheck(
+                    message.member,
+                    this.guilds,
+                );
                 let walletAmt: number = (
                     await this.database.dbRetrieveOne('users', {
                         id: message.author.id,
                     })
-                ).get('profile.wallet');
+                ).get('globalprofile.wallet');
                 walletAmt++;
                 console.log(walletAmt);
                 this.database.dbUpdateData(
@@ -115,7 +119,7 @@ export class TsumekiClient extends CommandClient {
                     },
                     {
                         $set: {
-                            'profile.wallet': walletAmt,
+                            'globalprofile.wallet': walletAmt,
                         },
                     },
                 );

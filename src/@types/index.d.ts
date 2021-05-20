@@ -14,10 +14,13 @@ declare namespace Database {
         globalprofile: {
             wallet: Number;
             level: Number;
+            exp: Number;
             inventory: String[];
         };
         guildprofiles: {
             guildid: String;
+            level: Number;
+            exp: Number;
         }[];
     }
 }
