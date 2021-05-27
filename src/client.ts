@@ -6,6 +6,7 @@ import {
     TextChannel,
 } from 'eris';
 import { GuildSchema } from './@types/index';
+import { checkProfile } from './checkprofile';
 import DBClient from './db';
 import { logger, loadCommands } from './functions';
 
@@ -97,33 +98,7 @@ export class TsumekiClient extends CommandClient {
         });
 
         this.on('messageCreate', async (message) => {
-            const userAlreadyExists = await this.database.dbMemberIDCheck(
-                message.member,
-            );
-            if (userAlreadyExists) {
-                this.database.dbMemberGuildProfileCheck(
-                    message.member,
-                    this.guilds,
-                );
-                let walletAmt: number = (
-                    await this.database.dbRetrieveOne('users', {
-                        id: message.author.id,
-                    })
-                ).get('globalprofile.wallet');
-                walletAmt++;
-                console.log(walletAmt);
-                this.database.dbUpdateData(
-                    'users',
-                    {
-                        id: message.author.id,
-                    },
-                    {
-                        $set: {
-                            'globalprofile.wallet': walletAmt,
-                        },
-                    },
-                );
-            }
+            checkProfile(<Message>message, this);
         });
     }
 
