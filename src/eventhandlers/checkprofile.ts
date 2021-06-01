@@ -1,5 +1,5 @@
 import { Message } from 'eris';
-import { TsumekiClient } from './client';
+import { TsumekiClient } from '../client';
 
 export async function checkProfile(message: Message, client: TsumekiClient) {
     const userAlreadyExists = await client.database.dbMemberIDCheck(
