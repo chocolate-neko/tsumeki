@@ -6,9 +6,10 @@ import {
     TextChannel,
 } from 'eris';
 import { GuildSchema } from './@types/index';
-import { checkProfile } from './checkprofile';
+import { checkProfile } from './eventhandlers/checkprofile';
 import DBClient from './db';
 import { logger, loadCommands } from './functions';
+import { memberJoin } from './eventhandlers/memberjoin';
 
 export class TsumekiClient extends CommandClient {
     // private client: CommandClient;
@@ -57,14 +58,7 @@ export class TsumekiClient extends CommandClient {
         });
 
         this.on('guildMemberAdd', (guild, member) => {
-            const channel = guild.channels.filter((channel) => {
-                return channel.name == 'tsu-welcome';
-            })[0];
-            if (channel.type == 0) {
-                channel.createMessage(
-                    `Welcome ${member.mention} to ${guild.name}!`,
-                );
-            }
+            memberJoin(guild, member, this);
         });
 
         this.on('guildCreate', async (guild) => {
